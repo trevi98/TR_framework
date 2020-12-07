@@ -1,0 +1,11 @@
+<?php
+  define('APPROOT',dirname(dirname(dirname(__FILE__))));
+  define('URLROOT','/projects/....');
+  define('VERSION',2.0);
+  define('SITENAME','stock');
+  define('DB_HOST','localhost');
+  define('DB_NAME','...');
+  define('DB_USER','root');
+  define('DB_PASS','');
+  define('EMAIL','abdullatef.trefi98@gmail.com');
+ ?>

@@ -1,8 +1,8 @@
 <?php
   define('APPROOT',dirname(dirname(dirname(__FILE__))));
-  define('URLROOT','/projects/....');
+  define('URLROOT','/projects/...');
   define('VERSION',2.0);
-  define('SITENAME','stock');
+  define('SITENAME','');
   define('DB_HOST','localhost');
   define('DB_NAME','...');
   define('DB_USER','root');

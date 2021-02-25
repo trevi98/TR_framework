@@ -24,7 +24,9 @@
         $this->view($view,['data'=>$data]);
         die();
       }
-      if(!isset($_POST['token']) || !isset($_SESSION['token']) || $_POST['token'] !== $_SESSION['token']){
+      if(!isset($_POST['token']) || !isset($_SESSION['token']) || ($_POST['token'] != $_SESSION['token']) ){
+        print_r($_SESSION);
+        dd($_POST);
         redirect(['destination'=>'Errors/forbidden']);
       }
       unset($_SESSION['token']);
@@ -253,13 +255,17 @@
 
 
 
-    ///////////////////////
-    //////////// html form
-    //////////////////////
+    //////////////////////////////////////
+    //////////// html form //////////////
+    ////////////////////////////////////
 
     public function open_form($args,$feilds,$data){
+      if(isset($_SESSION['token'])){
+        unset($_SESSION['token']);
+      }
       $token = password_hash(uniqid(rand(0,1000),true),PASSWORD_DEFAULT);
       $_SESSION['token'] = $token;
+      echo $token."<br>".$_SESSION['token'];
       $file = "";
       if(!isset($args['class'])){$args['class'] = "";}
       if(!isset($args['id'])){$args['id'] = "";}
@@ -276,6 +282,10 @@
         if($feild['type'] == "textarea"){
         $returns[$feild['name']] = $this->text_area($feild,$data);
         continue;
+        }
+        else if($feild['type'] == 'select'){
+          $returns[$feild['name']] = $this->select($feild,$data);
+          continue;
         }
         $returns[$feild['name']] = $this->input($feild,$data);
         // print_r ([$value['name']]);
@@ -317,6 +327,54 @@
           id='{$args['id']}' 
           value='{$val}' {$extra} >
       ";
+
+      if(isset($data['error']) && $data['error'] == $args['name']) {
+        $result .= "
+          <span class='error'>
+            {$data['message']}
+          </span>
+        
+        ";
+      }
+      return $result;
+    }
+
+
+    public function select($args,$data){
+      $val = "";
+      $extra = "";
+      if(!isset($args['class'])){$args['class'] = "";}
+      if(!isset($args['id'])){$args['id'] = "";}
+      if(!isset($args['extra'])){$args['extra'] = "";}
+      if(!empty($data['data']) && isset($data['data'][$args['name']])){
+
+        $val = $data['data'][$args['name']];
+      } 
+      else if(!empty($data['old_data']) && isset($data['old_data'][$args['name']])){
+
+        $val = $data['old_data'][$args['name']] ; 
+      }
+      if(isset($args['extra'])){
+
+        $extra = $args['extra'];
+      }
+      $result =  "
+        <select name='{$args['name']}'
+          class='{$args['class']}' 
+          id='{$args['id']}'>
+       
+      ";
+      foreach($args['options'] as $key => $value){
+        if($val == $key){
+        $result .= "<option value='{$key}' selected>{$value}</option>";
+
+        }
+        else{
+
+          $result .= "<option value={$key}>{$value}</option>";
+        }
+      }
+      $result .= "</select>";
 
       if(isset($data['error']) && $data['error'] == $args['name']) {
         $result .= "
